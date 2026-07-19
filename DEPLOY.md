@@ -1,47 +1,62 @@
 # 部署指南（Cloudflare Workers）
 
-三个站点 = 三个 Worker：`createjob`（AgentLens 旗舰）、`llmstxt-builder`、`agentfront`。
-KV 命名空间 `createjob-signups`（id `ad034fbd62384eb3abd7b612fc33e268`）已在你的 Cloudflare 账号创建完毕，
-两个 wrangler 配置已直接引用，无需再手动创建。
+## ✅ 当前线上状态（已自动部署）
 
-## 方式 A：本地一键部署（最快）
+本仓库已通过 **Cloudflare Workers Builds**（Git 集成）连接到 `createjob` Worker：
+每次 push 到默认分支，Cloudflare 自动构建并上线。三个网站已全部在线（统一部署在旗舰 Worker 上）：
+
+| 站点 | 线上地址 |
+|---|---|
+| AgentLens（AI 可见性检测器） | https://createjob.tuoqiantu.workers.dev/ |
+| llms.txt Builder（生成器+指南） | https://createjob.tuoqiantu.workers.dev/builder/ |
+| AgentFront（Agent 商店卡位站） | https://createjob.tuoqiantu.workers.dev/store/ |
+
+免费 API：`GET /api/check?url=<site>`（扫描）、`GET /store/api/catalog`（机器可读目录）、
+`GET /api/build-info`（构建信息）。邮箱名单写入 KV `createjob-signups`。
+
+工作机制：`npm postinstall`（`scripts/postinstall.mjs`）把 `/builder/`、`/store/` 两站资产并入旗舰
+资产目录，Workers Builds 再执行 `npx wrangler deploy` 一次性上线三站。
+
+> ⚠️ 注意：Workers Builds 会把构建内所有 `wrangler deploy` 的 Worker 名强制覆盖为所连接的
+> Worker（`createjob`），因此**无法**在这条管道里创建独立的 `llmstxt-builder` / `agentfront`
+> Worker——独立子域名需用下面两种方式之一。
+
+## 可选：给每个站点独立的 Worker / 子域名
+
+### 方式 A：本地一键部署
 
 ```bash
 npm install
 npx wrangler login        # 浏览器授权一次
-npm run deploy            # 部署全部三个站点
+npm run deploy            # 部署 createjob + llmstxt-builder + agentfront 三个 Worker
 ```
 
-部署后访问：
+部署后新增：`https://llmstxt-builder.tuoqiantu.workers.dev` 和 `https://agentfront.tuoqiantu.workers.dev`。
+（页面互链已自适应：在独立域名上自动切换为跨子域链接。）
 
-- `https://createjob.<你的子域>.workers.dev` — AgentLens
-- `https://llmstxt-builder.<你的子域>.workers.dev` — llms.txt Builder
-- `https://agentfront.<你的子域>.workers.dev` — AgentFront
+### 方式 B：控制台连接（官方 monorepo 流程，之后全自动）
 
-## 方式 B：Cloudflare Workers Builds（Git 自动部署）
+在 Cloudflare 控制台 Workers & Pages 中**再创建两个 Worker** 并各自连接本仓库：
 
-你的账号里已存在名为 `createjob` 的 Worker。若已在 Cloudflare 控制台将其连接到本仓库（Workers Builds）：
+1. Worker 名 `llmstxt-builder` → Settings → Build → 连接本仓库，Deploy command 设为
+   `npx wrangler deploy -c sites/llmstxt-builder/wrangler.jsonc`；
+2. Worker 名 `agentfront` → 同上，`npx wrangler deploy -c sites/agentfront/wrangler.jsonc`；
+3. 之后每次 push 三个 Worker 同步自动部署。
 
-1. 控制台 → Workers & Pages → `createjob` → Settings → Build，确认已连接本仓库与生产分支；
-2. **Build command 留空、Deploy command 设为 `npx wrangler deploy`** —— 根目录 `wrangler.jsonc` 即 AgentLens；
-3. 若想一次推送部署三个站点，把 Deploy command 改为：`npm run deploy`；
-4. 之后每次 push 到生产分支即自动上线。
+### 方式 C：GitHub Actions（备用）
 
-## 方式 C：GitHub Actions（已配置）
-
-仓库自带 `.github/workflows/deploy.yml`：push 到 `main` 或手动触发时自动部署三站。
-只需在 GitHub 仓库 Settings → Secrets and variables → Actions 添加：
-
-- `CLOUDFLARE_API_TOKEN`：Cloudflare 控制台 → My Profile → API Tokens → 使用 "Edit Cloudflare Workers" 模板创建。
+`.github/workflows/deploy.yml` 已配置（push 到 `main` 或手动触发）。需在 GitHub 仓库
+Settings → Secrets 添加 `CLOUDFLARE_API_TOKEN`（"Edit Cloudflare Workers" 模板创建）。
 
 ## 上线后建议（重要）
 
-1. **绑定自定义域名**（Workers → 域名 → Custom Domains）：`workers.dev` 子域对 SEO/GEO 不利，正式运营务必绑定自有域名；绑定后三站互链会按域名结构自动失效——把各页 `data-sister` 链接改为正式域名即可（全局搜索 `data-sister`）；
-2. **验证**：用 AgentLens 扫自己的三个站（应得 90+ 分，作为产品可信度展示）；
-3. **查看名单**：控制台 → KV → `createjob-signups`，或 `npx wrangler kv key list --namespace-id ad034fbd62384eb3abd7b612fc33e268`。
+1. **绑定自定义域名**（Workers → Custom Domains）：`workers.dev` 子域对 SEO/GEO 不利，正式运营务必绑定自有域名，并将三站拆分为独立域名/Worker；
+2. **自检**：用 AgentLens 扫描自己的站点（应得高分，作为产品可信度展示）；
+3. **查看邮箱名单**：控制台 → KV → `createjob-signups`，或
+   `npx wrangler kv key list --namespace-id ad034fbd62384eb3abd7b612fc33e268`。
 
 ## 常见问题
 
-- **`wrangler deploy` 报未登录**：先 `npx wrangler login`；CI 环境用 `CLOUDFLARE_API_TOKEN` 环境变量。
-- **KV 报错 namespace not found**：说明部署到了另一个 Cloudflare 账号——在该账号 `npx wrangler kv namespace create createjob-signups`，把新 id 替换到根 `wrangler.jsonc` 和 `sites/agentfront/wrangler.jsonc`。
-- **扫描 API 返回 403/超时**：目标网站屏蔽了数据中心 IP 或响应超过 8 秒，属预期行为，前端会显示可读错误。
+- **浏览器能打开，但脚本/爬虫访问返回 403**：Cloudflare 对 workers.dev 的自动化流量有 bot 拦截，属平台行为，不影响真实用户。
+- **KV 报错 namespace not found**：部署到了另一个 Cloudflare 账号——在该账号 `npx wrangler kv namespace create createjob-signups`，把新 id 替换到根 `wrangler.jsonc` 和 `sites/agentfront/wrangler.jsonc`。
+- **扫描 API 返回 502/超时**：目标网站屏蔽数据中心 IP 或响应超 8 秒，属预期行为，前端会显示可读错误。

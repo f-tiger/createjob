@@ -2,6 +2,12 @@
 
 三个互相导流的网站，组成一个"帮网站进入 AI 时代"的工具矩阵，全部部署在 Cloudflare Workers 上。
 
+**🟢 已上线**（push 即自动部署，详见 [DEPLOY.md](DEPLOY.md)）：
+
+- AgentLens：https://createjob.tuoqiantu.workers.dev/
+- llms.txt Builder：https://createjob.tuoqiantu.workers.dev/builder/
+- AgentFront：https://createjob.tuoqiantu.workers.dev/store/
+
 > 为什么是这个方向？完整调研与决策见 [docs/research-decision.md](docs/research-decision.md)。
 > 一句话：不做拥挤的 AI 应用，做"让所有网站被 AI 看见、被 Agent 使用"的铲子生意——
 > GEO 市场以 ~50% CAGR 增长但 SMB 无人服务；65% 的头部网站没有 llms.txt；
