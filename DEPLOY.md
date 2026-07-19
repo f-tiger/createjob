@@ -5,11 +5,15 @@
 本仓库已通过 **Cloudflare Workers Builds**（Git 集成）连接到 `createjob` Worker：
 每次 push 到默认分支，Cloudflare 自动构建并上线。三个网站已全部在线（统一部署在旗舰 Worker 上）：
 
-| 站点 | 线上地址 |
-|---|---|
-| AgentLens（AI 可见性检测器） | https://createjob.tuoqiantu.workers.dev/ |
-| llms.txt Builder（生成器+指南） | https://createjob.tuoqiantu.workers.dev/builder/ |
-| AgentFront（Agent 商店卡位站） | https://createjob.tuoqiantu.workers.dev/store/ |
+| 站点 | 自定义域名（主） | workers.dev（备用） |
+|---|---|---|
+| AgentLens（检测器/获客漏斗） | https://lens.agiscorecard.com/ | https://createjob.tuoqiantu.workers.dev/ |
+| llms.txt Builder | https://llmstxt.agiscorecard.com/ | https://createjob.tuoqiantu.workers.dev/builder/ |
+| AgentFront（主力方向） | https://agentfront.agiscorecard.com/ | https://createjob.tuoqiantu.workers.dev/store/ |
+
+自定义域名通过根 `wrangler.jsonc` 的 `routes`（`custom_domain: true`）声明，部署时 Cloudflare 自动
+创建 DNS 记录与证书（agiscorecard.com zone 在同一账号）。Worker 内按 Host 分流：
+`lens.*` → AgentLens，`llmstxt.*` → /builder 资产，`agentfront.*` → /store 资产与 API。
 
 免费 API：`GET /api/check?url=<site>`（扫描）、`GET /store/api/catalog`（机器可读目录）、
 `GET /api/build-info`（构建信息）。邮箱名单写入 KV `createjob-signups`。

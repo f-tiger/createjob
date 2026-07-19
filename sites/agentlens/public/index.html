@@ -167,9 +167,10 @@
     <div class="pillars" id="pillars"></div>
     <div class="recs" id="recs" style="display:none"><h3>Priority fixes</h3><ol id="reclist"></ol></div>
     <div class="capture">
-      <h3>Get monitored, not just scanned</h3>
-      <p>We're building weekly AI-visibility monitoring: track your score, get alerted when ChatGPT or Perplexity
-      can't see you, and benchmark against competitors. Join the early list — first 100 get it free for a year.</p>
+      <h3>Don't just get scored — get fixed</h3>
+      <p>Free scanners are everywhere. What nobody does is fix it for you. We turn your scan into deployed fixes:
+      llms.txt, product schema, an agent-readable catalog, agent-payable checkout. Join early access —
+      the first 100 sites get onboarded free.</p>
       <form id="capform">
         <input id="capemail" type="email" placeholder="you@company.com" required>
         <button type="submit">Join waitlist</button>
@@ -209,11 +210,25 @@
 </div>
 
 <script>
-// Sister sites are mounted on this same Worker in the unified deployment.
+// Sister links: custom subdomains (lens./llmstxt./agentfront.) when on the
+// user's domain, dedicated workers.dev hosts when deployed separately,
+// unified-deployment paths otherwise.
 (function () {
-  const paths = { "llmstxt-builder": "/builder/", "agentfront": "/store/" };
+  const h = location.hostname;
+  const wd = h.match(/^([^.]+)\.(.+\.workers\.dev)$/);
+  const custom = h.match(/^(lens|llmstxt|agentfront)\.(.+)$/);
+  let map;
+  if (wd) {
+    map = wd[1] === "createjob"
+      ? { createjob: "/", "llmstxt-builder": "/builder/", agentfront: "/store/" }
+      : { createjob: `https://createjob.${wd[2]}/`, "llmstxt-builder": `https://llmstxt-builder.${wd[2]}/`, agentfront: `https://agentfront.${wd[2]}/` };
+  } else if (custom) {
+    map = { createjob: `https://lens.${custom[2]}/`, "llmstxt-builder": `https://lens.${custom[2]}/builder/`, agentfront: `https://agentfront.${custom[2]}/` };
+  } else {
+    map = { createjob: "/", "llmstxt-builder": "/builder/", agentfront: "/store/" };
+  }
   document.querySelectorAll("[data-sister]").forEach((a) => {
-    a.href = paths[a.dataset.sister] || "/";
+    a.href = map[a.dataset.sister] || "/";
   });
 })();
 

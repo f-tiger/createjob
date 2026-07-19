@@ -152,14 +152,23 @@
 </div>
 
 <script>
-// Sister links: subdomains when on a dedicated workers.dev host,
-// unified-deployment paths otherwise (this page also serves at /store/).
+// Sister links: custom subdomains on the user's domain, dedicated
+// workers.dev hosts, or unified-deployment paths (this page serves at
+// /store/ and at agentfront.<domain>).
 (function () {
-  const m = location.hostname.match(/^([^.]+)\.(.+\.workers\.dev)$/);
-  const dedicated = m && m[1] === "agentfront";
-  const map = dedicated
-    ? { createjob: `https://createjob.${m[2]}/`, "llmstxt-builder": `https://llmstxt-builder.${m[2]}/` }
-    : { createjob: "/", "llmstxt-builder": "/builder/" };
+  const h = location.hostname;
+  const wd = h.match(/^([^.]+)\.(.+\.workers\.dev)$/);
+  const custom = h.match(/^(lens|llmstxt|agentfront)\.(.+)$/);
+  let map;
+  if (wd) {
+    map = wd[1] === "createjob"
+      ? { createjob: "/", "llmstxt-builder": "/builder/", agentfront: "/store/" }
+      : { createjob: `https://createjob.${wd[2]}/`, "llmstxt-builder": `https://llmstxt-builder.${wd[2]}/`, agentfront: `https://agentfront.${wd[2]}/` };
+  } else if (custom) {
+    map = { createjob: `https://lens.${custom[2]}/`, "llmstxt-builder": `https://lens.${custom[2]}/builder/`, agentfront: `https://agentfront.${custom[2]}/` };
+  } else {
+    map = { createjob: "/", "llmstxt-builder": "/builder/", agentfront: "/store/" };
+  }
   document.querySelectorAll("[data-sister]").forEach((a) => {
     a.href = map[a.dataset.sister] || "/";
   });

@@ -4,9 +4,16 @@
 
 **🟢 已上线**（push 即自动部署，详见 [DEPLOY.md](DEPLOY.md)）：
 
-- AgentLens：https://createjob.tuoqiantu.workers.dev/
-- llms.txt Builder：https://createjob.tuoqiantu.workers.dev/builder/
-- AgentFront：https://createjob.tuoqiantu.workers.dev/store/
+| 站点 | 自定义域名 | workers.dev 备用 |
+|---|---|---|
+| AgentLens | https://lens.agiscorecard.com/ | https://createjob.tuoqiantu.workers.dev/ |
+| llms.txt Builder | https://llmstxt.agiscorecard.com/ | https://createjob.tuoqiantu.workers.dev/builder/ |
+| AgentFront | https://agentfront.agiscorecard.com/ | https://createjob.tuoqiantu.workers.dev/store/ |
+
+**⚠️ 定位调整（2026-07-19 竞对调研后，详见 [docs/competitive-analysis.md](docs/competitive-analysis.md)）**：
+检测器与监控订阅赛道已被免费巨头商品化（Cloudflare isitagentready.com、HubSpot 免费 Grader + $50/月监控），
+因此 AgentLens 降级为获客漏斗（卖"修复"不卖"分数"），**AgentFront（欧美 SMB agentic-commerce 接入工具）升级为主力方向**——
+这是调研中唯一验证到的空档。
 
 > 为什么是这个方向？完整调研与决策见 [docs/research-decision.md](docs/research-decision.md)。
 > 一句话：不做拥挤的 AI 应用，做"让所有网站被 AI 看见、被 Agent 使用"的铲子生意——

@@ -7,10 +7,10 @@
 
 AI-First Web 工具矩阵（三站统一部署在 Cloudflare Worker `createjob` 上，Workers Builds 推送自动部署）：
 
-- AgentLens（/）：AI 可见性检测器，`/api/check?url=` 免费扫描 API
-- llms.txt Builder（/builder/）
-- AgentFront（/store/）：agentic commerce 卡位站
-- 线上地址：https://createjob.tuoqiantu.workers.dev/
+- AgentLens（lens.agiscorecard.com，/）：AI 可见性检测器，`/api/check?url=` 免费扫描 API——定位为获客漏斗
+- llms.txt Builder（llmstxt.agiscorecard.com，/builder/）：引流资产，零投入维持
+- AgentFront（agentfront.agiscorecard.com，/store/）：**主力方向**——欧美 SMB agentic-commerce 接入工具（2026-07-19 竞对调研结论，见 docs/competitive-analysis.md：检测/监控已被免费巨头商品化，接入层是唯一空档）
+- workers.dev 备用地址：https://createjob.tuoqiantu.workers.dev/
 - 调研与决策记录：docs/ 目录
 - 注意：Workers Builds 会把 CI 内所有 wrangler deploy 强制改名为 createjob，独立 Worker 需本地部署或控制台连接（见 DEPLOY.md）
 - 用户的 Cloudflare 账号下另有并行会话创建的同类站点（agentready、selltoagents 等），做方向决策时需考虑内部重叠

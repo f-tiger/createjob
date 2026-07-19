@@ -23,9 +23,27 @@ const AI_CRAWLERS = [
 const FETCH_TIMEOUT_MS = 8000;
 const MAX_BODY_BYTES = 512 * 1024;
 
+// Subdomain -> unified asset prefix (lens.* / workers.dev root serve AgentLens as-is)
+const SUBSITE_PREFIX = { agentfront: "/store", llmstxt: "/builder" };
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+
+    const prefix = SUBSITE_PREFIX[url.hostname.split(".")[0]];
+    if (prefix === "/store") {
+      if (url.pathname === "/api/waitlist" && request.method === "POST") {
+        return handleWaitlist(request, env);
+      }
+      if (url.pathname === "/api/catalog") {
+        return handleCatalog();
+      }
+    }
+    if (prefix) {
+      const mapped = new URL(url);
+      mapped.pathname = prefix + url.pathname;
+      return env.ASSETS.fetch(new Request(mapped, request));
+    }
 
     if (url.pathname === "/api/check") {
       return handleCheck(request);

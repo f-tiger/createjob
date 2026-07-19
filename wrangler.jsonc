@@ -9,6 +9,15 @@
     "directory": "sites/agentlens/public",
     "binding": "ASSETS"
   },
+  // Custom domains on the user's zone. The worker routes by hostname:
+  // lens.* -> AgentLens (+ /builder/), agentfront.* -> /store.
+  // No llmstxt.* subdomain: a parallel session already runs an llms.txt
+  // builder on this zone — ours stays at lens.<domain>/builder/ to avoid
+  // duplicate sites on the same domain.
+  "routes": [
+    { "pattern": "lens.agiscorecard.com", "custom_domain": true },
+    { "pattern": "agentfront.agiscorecard.com", "custom_domain": true }
+  ],
   "kv_namespaces": [
     {
       "binding": "SIGNUPS",
