@@ -209,12 +209,11 @@
 </div>
 
 <script>
-// Sister-site links: derive from current hostname so they work on any
-// workers.dev subdomain (createjob.<sub>.workers.dev -> <name>.<sub>.workers.dev).
+// Sister sites are mounted on this same Worker in the unified deployment.
 (function () {
-  const m = location.hostname.match(/^[^.]+\.(.+\.workers\.dev)$/);
+  const paths = { "llmstxt-builder": "/builder/", "agentfront": "/store/" };
   document.querySelectorAll("[data-sister]").forEach((a) => {
-    a.href = m ? `https://${a.dataset.sister}.${m[1]}/` : `https://${a.dataset.sister}.workers.dev/`;
+    a.href = paths[a.dataset.sister] || "/";
   });
 })();
 

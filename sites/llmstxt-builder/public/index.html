@@ -214,10 +214,16 @@ Optional free-text notes: audience, pricing, anything a model should know.
 </div>
 
 <script>
+// Sister links: subdomains when on a dedicated workers.dev host,
+// unified-deployment paths otherwise (this page also serves at /builder/).
 (function () {
-  const m = location.hostname.match(/^[^.]+\.(.+\.workers\.dev)$/);
+  const m = location.hostname.match(/^([^.]+)\.(.+\.workers\.dev)$/);
+  const dedicated = m && m[1] === "llmstxt-builder";
+  const map = dedicated
+    ? { createjob: `https://createjob.${m[2]}/`, agentfront: `https://agentfront.${m[2]}/` }
+    : { createjob: "/", agentfront: "/store/" };
   document.querySelectorAll("[data-sister]").forEach((a) => {
-    a.href = m ? `https://${a.dataset.sister}.${m[1]}/` : `https://${a.dataset.sister}.workers.dev/`;
+    a.href = map[a.dataset.sister] || "/";
   });
 })();
 

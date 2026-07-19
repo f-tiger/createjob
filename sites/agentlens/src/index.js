@@ -4,6 +4,9 @@
  * for AI crawlers, answer engines, and autonomous agents.
  */
 
+import { handleWaitlist, handleCatalog } from "../../agentfront/src/handlers.js";
+import buildInfo from "../public/build-info.json";
+
 const AI_CRAWLERS = [
   { ua: "GPTBot", org: "OpenAI — model training" },
   { ua: "OAI-SearchBot", org: "OpenAI — ChatGPT Search" },
@@ -30,7 +33,17 @@ export default {
     if (url.pathname === "/api/subscribe" && request.method === "POST") {
       return handleSubscribe(request, env, "agentlens");
     }
-    // Everything else -> static assets
+    if (url.pathname === "/api/build-info") {
+      return json(buildInfo);
+    }
+    // AgentFront also mounts under /store/ in the unified deployment
+    if (url.pathname === "/store/api/waitlist" && request.method === "POST") {
+      return handleWaitlist(request, env);
+    }
+    if (url.pathname === "/store/api/catalog") {
+      return handleCatalog();
+    }
+    // Everything else -> static assets (incl. /builder/ and /store/ sites)
     return env.ASSETS.fetch(request);
   },
 };

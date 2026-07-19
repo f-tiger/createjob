@@ -4,7 +4,7 @@
   "private": true,
   "description": "AI-era website portfolio: AgentLens (AI visibility checker), llms.txt Builder, AgentFront (agentic commerce)",
   "scripts": {
-    "postinstall": "node scripts/deploy-siblings.mjs",
+    "postinstall": "node scripts/postinstall.mjs",
     "dev": "wrangler dev",
     "dev:llmstxt": "wrangler dev -c sites/llmstxt-builder/wrangler.jsonc",
     "dev:agentfront": "wrangler dev -c sites/agentfront/wrangler.jsonc",

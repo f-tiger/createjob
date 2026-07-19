@@ -9,5 +9,5 @@
 
 ## Sister sites
 
-- llms.txt Builder (worker: llmstxt-builder): Free generator for spec-correct llms.txt files.
-- AgentFront (worker: agentfront): Agent-native storefront template for the agentic commerce era.
+- [llms.txt Builder](/builder/): Free generator for spec-correct llms.txt files, with a guide to the standard.
+- [AgentFront](/store/): Agent-native storefront template for the agentic commerce era. Machine-readable catalog at /store/api/catalog.

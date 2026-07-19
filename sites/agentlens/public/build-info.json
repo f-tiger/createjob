@@ -1,0 +1,8 @@
+{
+  "builtAt": null,
+  "branch": null,
+  "commit": null,
+  "siblingDeployExitCodes": null,
+  "env": null,
+  "note": "default manifest — overwritten by scripts/postinstall.mjs inside Workers Builds"
+}

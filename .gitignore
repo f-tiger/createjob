@@ -1,5 +1,8 @@
 node_modules/
 .wrangler/
+# generated unified asset tree (assembled by scripts/postinstall.mjs)
+sites/agentlens/public/builder/
+sites/agentlens/public/store/
 .dev.vars
 *.log
 .DS_Store
