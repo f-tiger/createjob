@@ -6,8 +6,9 @@
 > 已决定以 sellsomething 为主体。本仓库站点暂保持在线，待确认后下线；深度竞对调研报告
 > 也已迁至 sellsomething（docs/competitive-analysis.md）。
 >
-> **遗留事项**：`lens.agiscorecard.com` 与 `agentfront.agiscorecard.com` 两个自定义域名仍挂在
-> 本仓库的 `createjob` Worker 上；移交/取舍见下文与 DEPLOY.md。
+> **下线记录（2026-07-19）**：`agentfront.agiscorecard.com` 已移交给 sellsomething 管理的
+> `agentfront` Worker；`lens.agiscorecard.com` 已摘除；`createjob`、`llmstxt-builder` Worker 已删除；
+> 本仓库 CI 已停用，仅作历史留档。邮箱名单 KV `createjob-signups` 保留未删。
 
 三个互相导流的网站，组成一个"帮网站进入 AI 时代"的工具矩阵，全部部署在 Cloudflare Workers 上。
 
