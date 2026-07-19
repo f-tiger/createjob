@@ -5,6 +5,11 @@
 
 # 项目背景
 
+**⚠️ 本仓库已于 2026-07-19 合并入 f-tiger/sellsomething（以该仓库为主体），仅维持在线待下线确认。**
+AgentFront 已迁至 sellsomething/sites/agentfront；调研文档已同步迁移。
+遗留：lens/agentfront.agiscorecard.com 两个域名仍挂在 createjob Worker 上。
+
+
 AI-First Web 工具矩阵（三站统一部署在 Cloudflare Worker `createjob` 上，Workers Builds 推送自动部署）：
 
 - AgentLens（lens.agiscorecard.com，/）：AI 可见性检测器，`/api/check?url=` 免费扫描 API——定位为获客漏斗

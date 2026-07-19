@@ -1,5 +1,14 @@
 # AI-First Web 工具矩阵
 
+> **⚠️ 2026-07-19 已合并入 [f-tiger/sellsomething](https://github.com/f-tiger/sellsomething)**：
+> 本仓库与 sellsomething（另一并行会话产物）大部分重复（AgentLens≈AgentReady、
+> llms.txt Builder≈其内置 llms-txt-generator、AgentFront 已整体迁入 `sites/agentfront`），
+> 已决定以 sellsomething 为主体。本仓库站点暂保持在线，待确认后下线；深度竞对调研报告
+> 也已迁至 sellsomething（docs/competitive-analysis.md）。
+>
+> **遗留事项**：`lens.agiscorecard.com` 与 `agentfront.agiscorecard.com` 两个自定义域名仍挂在
+> 本仓库的 `createjob` Worker 上；移交/取舍见下文与 DEPLOY.md。
+
 三个互相导流的网站，组成一个"帮网站进入 AI 时代"的工具矩阵，全部部署在 Cloudflare Workers 上。
 
 **🟢 已上线**（push 即自动部署，详见 [DEPLOY.md](DEPLOY.md)）：
@@ -7,7 +16,7 @@
 | 站点 | 自定义域名 | workers.dev 备用 |
 |---|---|---|
 | AgentLens | https://lens.agiscorecard.com/ | https://createjob.tuoqiantu.workers.dev/ |
-| llms.txt Builder | https://llmstxt.agiscorecard.com/ | https://createjob.tuoqiantu.workers.dev/builder/ |
+| llms.txt Builder | https://lens.agiscorecard.com/builder/ | https://createjob.tuoqiantu.workers.dev/builder/ |
 | AgentFront | https://agentfront.agiscorecard.com/ | https://createjob.tuoqiantu.workers.dev/store/ |
 
 **⚠️ 定位调整（2026-07-19 竞对调研后，详见 [docs/competitive-analysis.md](docs/competitive-analysis.md)）**：
