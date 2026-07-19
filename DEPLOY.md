@@ -11,9 +11,18 @@
 | llms.txt Builder | https://llmstxt.agiscorecard.com/ | https://createjob.tuoqiantu.workers.dev/builder/ |
 | AgentFront（主力方向） | https://agentfront.agiscorecard.com/ | https://createjob.tuoqiantu.workers.dev/store/ |
 
-自定义域名通过根 `wrangler.jsonc` 的 `routes`（`custom_domain: true`）声明，部署时 Cloudflare 自动
-创建 DNS 记录与证书（agiscorecard.com zone 在同一账号）。Worker 内按 Host 分流：
-`lens.*` → AgentLens，`llmstxt.*` → /builder 资产，`agentfront.*` → /store 资产与 API。
+自定义域名通过根 `wrangler.jsonc` 的 `routes`（`custom_domain: true`）声明。Worker 内按 Host 分流：
+`lens.*` → AgentLens，`agentfront.*` → /store 资产与 API（`llmstxt.*` 逻辑已预留但未启用子域名）。
+
+> **⚠️ 需要一次手动操作**：Workers Builds 自动生成的 API 令牌没有 DNS 写权限，无法在 CI 里自动挂载
+> 自定义域名（代码与资产部署不受影响）。两种解决方式任选其一：
+>
+> **方式一（最快，4 次点击）**：控制台 → Workers & Pages → `createjob` → Settings →
+> Domains & Routes → Add → Custom Domain，分别添加 `lens.agiscorecard.com` 和
+> `agentfront.agiscorecard.com`。DNS 与证书自动配置，1 分钟内生效，Host 分流代码已在线等待。
+>
+> **方式二（一劳永逸）**：My Profile → API Tokens → 找到 Workers Builds 使用的令牌 → 编辑，
+> 添加权限 `Zone → DNS → Edit`（所有区域）。之后每次 push 会自动核对并挂载 routes 里声明的域名。
 
 免费 API：`GET /api/check?url=<site>`（扫描）、`GET /store/api/catalog`（机器可读目录）、
 `GET /api/build-info`（构建信息）。邮箱名单写入 KV `createjob-signups`。
