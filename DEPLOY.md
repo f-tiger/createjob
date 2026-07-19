@@ -14,15 +14,12 @@
 自定义域名通过根 `wrangler.jsonc` 的 `routes`（`custom_domain: true`）声明。Worker 内按 Host 分流：
 `lens.*` → AgentLens，`agentfront.*` → /store 资产与 API（`llmstxt.*` 逻辑已预留但未启用子域名）。
 
-> **⚠️ 需要一次手动操作**：Workers Builds 自动生成的 API 令牌没有 DNS 写权限，无法在 CI 里自动挂载
-> 自定义域名（代码与资产部署不受影响）。两种解决方式任选其一：
+> ✅ **自定义域名已生效**（2026-07-19 由 GitHub Actions 用仓库 Secret `CLOUDFLARE_API_TOKEN`
+> 完成挂载）。当前有两条并行部署管道，push 后都会自动执行，结果幂等：
 >
-> **方式一（最快，4 次点击）**：控制台 → Workers & Pages → `createjob` → Settings →
-> Domains & Routes → Add → Custom Domain，分别添加 `lens.agiscorecard.com` 和
-> `agentfront.agiscorecard.com`。DNS 与证书自动配置，1 分钟内生效，Host 分流代码已在线等待。
->
-> **方式二（一劳永逸）**：My Profile → API Tokens → 找到 Workers Builds 使用的令牌 → 编辑，
-> 添加权限 `Zone → DNS → Edit`（所有区域）。之后每次 push 会自动核对并挂载 routes 里声明的域名。
+> 1. **Cloudflare Workers Builds**：只部署旗舰 `createjob`（CI 会强制覆盖 Worker 名，无法建其他 Worker）；
+> 2. **GitHub Actions**（`.github/workflows/deploy.yml`）：部署全部三个 Worker（`createjob`、
+>    `llmstxt-builder`、`agentfront`）并核对自定义域名——独立 Worker 与域名挂载全靠这条管道。
 
 免费 API：`GET /api/check?url=<site>`（扫描）、`GET /store/api/catalog`（机器可读目录）、
 `GET /api/build-info`（构建信息）。邮箱名单写入 KV `createjob-signups`。
