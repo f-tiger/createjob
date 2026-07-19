@@ -5,6 +5,11 @@
   "name": "createjob",
   "main": "sites/agentlens/src/index.js",
   "compatibility_date": "2026-07-01",
+  // In Workers Builds this also deploys llmstxt-builder and agentfront,
+  // so one push ships all three sites. No-op locally.
+  "build": {
+    "command": "node scripts/deploy-siblings.mjs"
+  },
   "assets": {
     "directory": "sites/agentlens/public",
     "binding": "ASSETS"
