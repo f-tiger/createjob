@@ -34,10 +34,14 @@ for (const cfg of [
 ]) {
   console.log(`[postinstall] deploying ${cfg} …`);
   const r = spawnSync("npx", ["wrangler", "deploy", "-c", cfg], {
-    stdio: "inherit",
+    encoding: "utf8",
     env: process.env,
   });
-  results[cfg] = r.status;
+  const out = `${r.stdout || ""}\n${r.stderr || ""}`;
+  console.log(out);
+  // Keep the tail of the output in the manifest for diagnostics (this is
+  // where wrangler prints the deployed URL or the error).
+  results[cfg] = { exit: r.status, tail: out.trim().slice(-600) };
   if (r.status !== 0) {
     // Never fail the install — the flagship deploy that follows must not
     // be blocked by a sibling failure.
@@ -56,7 +60,7 @@ try {
         builtAt: new Date().toISOString(),
         branch: process.env.WORKERS_CI_BRANCH || null,
         commit: process.env.WORKERS_CI_COMMIT_SHA || null,
-        siblingDeployExitCodes: results,
+        siblingDeploys: results,
         env: {
           WORKERS_CI: Boolean(process.env.WORKERS_CI),
           hasApiToken: Boolean(process.env.CLOUDFLARE_API_TOKEN),
