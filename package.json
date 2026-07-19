@@ -1,0 +1,18 @@
+{
+  "name": "createjob-ai-sites",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AI-era website portfolio: AgentLens (AI visibility checker), llms.txt Builder, AgentFront (agentic commerce)",
+  "scripts": {
+    "dev": "wrangler dev",
+    "dev:llmstxt": "wrangler dev -c sites/llmstxt-builder/wrangler.jsonc",
+    "dev:agentfront": "wrangler dev -c sites/agentfront/wrangler.jsonc",
+    "deploy": "npm run deploy:agentlens && npm run deploy:llmstxt && npm run deploy:agentfront",
+    "deploy:agentlens": "wrangler deploy",
+    "deploy:llmstxt": "wrangler deploy -c sites/llmstxt-builder/wrangler.jsonc",
+    "deploy:agentfront": "wrangler deploy -c sites/agentfront/wrangler.jsonc"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  }
+}

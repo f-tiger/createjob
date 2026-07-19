@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>llms.txt Builder — free generator for the llms.txt standard</title>
+<meta name="description" content="Build a spec-correct llms.txt file for your website in 2 minutes. Free generator with live preview, plus a plain-English guide to the llms.txt standard. 65% of top sites still don't have one.">
+<meta property="og:title" content="llms.txt Builder — free llms.txt generator">
+<meta property="og:description" content="Build a spec-correct llms.txt for your site in 2 minutes. Live preview, copy or download.">
+<meta property="og:type" content="website">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "llms.txt Builder",
+  "applicationCategory": "DeveloperApplication",
+  "description": "Free online generator that creates spec-correct llms.txt files so LLMs and AI agents can understand your website.",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is llms.txt?",
+      "acceptedAnswer": { "@type": "Answer", "text": "llms.txt is a plain-markdown file served at /llms.txt that gives large language models a curated map of your website: what it is, and which pages matter, each with a one-line summary. It is to AI systems what sitemap.xml is to search crawlers." }
+    },
+    {
+      "@type": "Question",
+      "name": "Does my website need an llms.txt file?",
+      "acceptedAnswer": { "@type": "Answer", "text": "If you want ChatGPT, Claude, Perplexity and AI agents to represent your site accurately, yes. Around 65% of top-100 websites still lack one, so adding it is a cheap competitive edge." }
+    },
+    {
+      "@type": "Question",
+      "name": "Where do I put the llms.txt file?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Serve it at the root of your domain: https://yourdomain.com/llms.txt, as plain text or markdown." }
+    }
+  ]
+}
+</script>
+<style>
+  :root {
+    --bg: #0d1117; --panel: #161b27; --panel2: #10141d; --text: #e6eaf3; --muted: #8a93a6;
+    --line: #262d3d; --accent: #f0a742; --accent2: #f4744b; --pass: #3fb87f;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body { background: var(--bg); color: var(--text); font: 16px/1.6 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+  .wrap { max-width: 1060px; margin: 0 auto; padding: 0 20px; }
+  header { padding: 26px 0; display: flex; justify-content: space-between; align-items: center; }
+  .logo { font-weight: 800; font-size: 19px; }
+  .logo span { color: var(--accent); }
+  nav a { color: var(--muted); text-decoration: none; font-size: 14px; margin-left: 16px; }
+  nav a:hover { color: var(--text); }
+  .hero { text-align: center; padding: 34px 0 26px; }
+  .hero h1 { font-size: clamp(28px, 4.6vw, 44px); font-weight: 800; letter-spacing: -.02em; }
+  .hero h1 em { font-style: normal; background: linear-gradient(90deg, var(--accent), var(--accent2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .hero p { color: var(--muted); max-width: 640px; margin: 14px auto 0; }
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin: 26px 0 50px; }
+  @media (max-width: 860px) { .cols { grid-template-columns: 1fr; } }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 20px; }
+  .card h2 { font-size: 16px; margin-bottom: 14px; }
+  label { display: block; font-size: 13px; color: var(--muted); margin: 12px 0 5px; }
+  input[type=text], textarea {
+    width: 100%; background: var(--panel2); border: 1px solid var(--line); border-radius: 9px;
+    color: var(--text); padding: 10px 12px; font-size: 14.5px; outline: none; font-family: inherit;
+  }
+  input:focus, textarea:focus { border-color: var(--accent); }
+  .section-block { border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px 14px; margin-top: 14px; background: var(--panel2); }
+  .section-block .rowhead { display: flex; justify-content: space-between; align-items: center; }
+  .link-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+  .link-row input { background: var(--bg); }
+  .link-row .full { grid-column: 1 / -1; }
+  button { cursor: pointer; border: 0; border-radius: 9px; font-weight: 600; font-size: 14px; }
+  .btn-ghost { background: transparent; color: var(--accent); padding: 6px 10px; border: 1px dashed var(--line); }
+  .btn-ghost:hover { border-color: var(--accent); }
+  .btn-x { background: transparent; color: var(--muted); font-size: 16px; padding: 2px 8px; }
+  .btn-x:hover { color: var(--accent2); }
+  .btn-primary { background: linear-gradient(90deg, var(--accent), var(--accent2)); color: #14100a; padding: 11px 18px; }
+  .actions { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+  pre#preview {
+    background: var(--panel2); border: 1px solid var(--line); border-radius: 10px; padding: 16px;
+    font: 13px/1.55 ui-monospace, "SF Mono", Menlo, Consolas, monospace; overflow-x: auto;
+    white-space: pre-wrap; word-break: break-word; min-height: 300px; color: #cfd6e4;
+  }
+  .copied { color: var(--pass); font-size: 13px; align-self: center; }
+  .guide { max-width: 760px; margin: 0 auto 70px; }
+  .guide h2 { font-size: 26px; margin: 40px 0 12px; letter-spacing: -.01em; }
+  .guide h3 { font-size: 18px; margin: 24px 0 8px; }
+  .guide p, .guide li { color: #c3cad8; font-size: 15.5px; }
+  .guide li { margin: 6px 0 6px 20px; }
+  .guide code { background: var(--panel); border: 1px solid var(--line); border-radius: 5px; padding: 1px 6px; font-size: 13.5px; }
+  .guide pre { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px; overflow-x: auto; font-size: 13px; margin: 12px 0; }
+  .callout { background: linear-gradient(135deg, #241a10, #1d1410); border: 1px solid #3a2c1a; border-radius: 12px; padding: 18px; margin: 26px 0; }
+  .callout a { color: var(--accent); }
+  footer { border-top: 1px solid var(--line); padding: 24px 0 42px; color: var(--muted); font-size: 13.5px; }
+  footer a { color: var(--accent); text-decoration: none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo">llms.txt <span>Builder</span></div>
+    <nav>
+      <a href="#guide">What is llms.txt?</a>
+      <a href="#" data-sister="createjob">AI Visibility Scanner</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h1>Give AI a <em>map of your website</em></h1>
+    <p>65% of top websites still have no <code style="color:var(--accent)">llms.txt</code> — the file that tells ChatGPT,
+    Claude and AI agents what your site is and which pages matter. Build yours in 2 minutes, free.</p>
+  </section>
+
+  <div class="cols">
+    <div class="card">
+      <h2>1 · Describe your site</h2>
+      <label for="siteName">Site / project name *</label>
+      <input type="text" id="siteName" placeholder="Acme Analytics" autocomplete="off">
+      <label for="siteDesc">One-sentence summary *</label>
+      <textarea id="siteDesc" rows="2" placeholder="Self-serve product analytics for indie SaaS teams."></textarea>
+      <label for="siteNotes">Extra context (optional — pricing model, audience, caveats)</label>
+      <textarea id="siteNotes" rows="2" placeholder="Free tier available. Docs are the best entry point for technical questions."></textarea>
+
+      <h2 style="margin-top:22px">2 · Add your key pages</h2>
+      <div id="sections"></div>
+      <div class="actions">
+        <button class="btn-ghost" id="addSection">+ Add section</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>3 · Your llms.txt</h2>
+      <pre id="preview"># Your site name
+
+&gt; Your one-sentence summary…</pre>
+      <div class="actions">
+        <button class="btn-primary" id="copyBtn">Copy to clipboard</button>
+        <button class="btn-primary" id="dlBtn" style="background:var(--panel2);color:var(--accent);border:1px solid var(--line)">Download llms.txt</button>
+        <span class="copied" id="copiedMsg"></span>
+      </div>
+      <p style="color:var(--muted);font-size:13px;margin-top:12px">
+        Upload it to your web root so it's served at <code>yourdomain.com/llms.txt</code>. Then verify with the
+        <a href="#" data-sister="createjob" style="color:var(--accent)">AI Visibility Scanner</a>.
+      </p>
+    </div>
+  </div>
+
+  <article class="guide" id="guide">
+    <h2>What is llms.txt? The 5-minute guide</h2>
+    <p><strong>llms.txt</strong> is a plain-markdown file served at the root of your domain
+    (<code>/llms.txt</code>) that gives large language models a curated, noise-free map of your website:
+    what the site is, and which pages matter — each with a one-line summary. Think of it as
+    <code>sitemap.xml</code> for the AI era: sitemaps tell search crawlers <em>where</em> your pages are;
+    llms.txt tells AI systems <em>what they mean</em>.</p>
+
+    <h3>Why it exists</h3>
+    <ul>
+      <li>LLM context windows are limited — models can't ingest your whole site, so they need a curated index.</li>
+      <li>HTML is noisy — navigation, ads and scripts bury the actual content. Markdown is what models parse best.</li>
+      <li>AI answers are the new front door: ChatGPT, Perplexity and AI Overviews now mediate a growing share of discovery. If models misunderstand your site, they misrepresent it — or skip it.</li>
+    </ul>
+
+    <h3>The format (from llmstxt.org)</h3>
+    <pre># Project name
+
+&gt; One-sentence summary of what this site is.
+
+Optional free-text notes: audience, pricing, anything a model should know.
+
+## Docs
+- [Quick start](https://example.com/docs/start): Install and first run in 5 minutes.
+- [API reference](https://example.com/docs/api): Every endpoint with examples.
+
+## Optional
+- [Blog](https://example.com/blog): Long-form articles; skip unless asked for background.</pre>
+    <ul>
+      <li>One H1 (<code>#</code>) — the site name. Required.</li>
+      <li>A blockquote (<code>&gt;</code>) — the one-line summary. Strongly recommended.</li>
+      <li><code>##</code> sections grouping links, each link as <code>[title](url): description</code>.</li>
+      <li>A section named <code>Optional</code> marks lower-priority links models may skip.</li>
+      <li>Bonus: <code>llms-full.txt</code> — your entire documentation flattened into one markdown file.</li>
+    </ul>
+
+    <h3>Who already uses it</h3>
+    <p>Anthropic, Cloudflare, Stripe, Zapier and thousands of documentation sites publish llms.txt.
+    Frameworks like Docusaurus, VitePress, Mintlify and Nextra can generate one automatically.
+    Adoption is still early — which is exactly why it's an edge.</p>
+
+    <h3>llms.txt vs robots.txt vs sitemap.xml</h3>
+    <ul>
+      <li><code>robots.txt</code> — permissions: who may crawl what.</li>
+      <li><code>sitemap.xml</code> — inventory: every URL, no meaning.</li>
+      <li><code>llms.txt</code> — meaning: the few URLs that matter, explained.</li>
+    </ul>
+    <p>You want all three. They answer different questions.</p>
+
+    <div class="callout">
+      <strong>Next step:</strong> after uploading your llms.txt, run a free scan with
+      <a href="#" data-sister="createjob">AgentLens</a> to check your full AI visibility —
+      crawler access, structured data, and agent readiness in one score.
+    </div>
+  </article>
+
+  <footer>
+    <div>llms.txt Builder — free forever. Part of the AI-first web toolkit:
+      <a href="#" data-sister="createjob">AgentLens Scanner</a> ·
+      <a href="#" data-sister="agentfront">AgentFront</a></div>
+    <div style="margin-top:6px">Spec: <a href="https://llmstxt.org" rel="noopener">llmstxt.org</a> · © 2026</div>
+  </footer>
+</div>
+
+<script>
+(function () {
+  const m = location.hostname.match(/^[^.]+\.(.+\.workers\.dev)$/);
+  document.querySelectorAll("[data-sister]").forEach((a) => {
+    a.href = m ? `https://${a.dataset.sister}.${m[1]}/` : `https://${a.dataset.sister}.workers.dev/`;
+  });
+})();
+
+const sectionsEl = document.getElementById("sections");
+let sectionSeq = 0;
+
+function addSection(name) {
+  const id = ++sectionSeq;
+  const div = document.createElement("div");
+  div.className = "section-block";
+  div.dataset.sec = id;
+  div.innerHTML = `
+    <div class="rowhead">
+      <input type="text" class="sec-name" placeholder="Section name (e.g. Docs, Products, Optional)" value="${name || ""}" style="max-width:70%">
+      <button class="btn-x" data-del-sec>✕</button>
+    </div>
+    <div class="links"></div>
+    <button class="btn-ghost" data-add-link style="margin-top:10px">+ Add link</button>`;
+  sectionsEl.appendChild(div);
+  addLink(div.querySelector(".links"));
+  return div;
+}
+
+function addLink(container) {
+  const row = document.createElement("div");
+  row.className = "link-row";
+  row.innerHTML = `
+    <input type="text" class="l-title" placeholder="Page title">
+    <input type="text" class="l-url" placeholder="https://…">
+    <input type="text" class="l-desc full" placeholder="One-line description (optional)">`;
+  container.appendChild(row);
+}
+
+sectionsEl.addEventListener("click", (e) => {
+  if (e.target.matches("[data-add-link]")) addLink(e.target.parentElement.querySelector(".links"));
+  if (e.target.matches("[data-del-sec]")) e.target.closest(".section-block").remove();
+  build();
+});
+document.getElementById("addSection").addEventListener("click", () => { addSection(); build(); });
+document.addEventListener("input", build);
+
+function build() {
+  const name = val("siteName") || "Your site name";
+  const desc = val("siteDesc") || "Your one-sentence summary…";
+  let out = `# ${name}\n\n> ${desc}\n`;
+  const notes = val("siteNotes");
+  if (notes) out += `\n${notes}\n`;
+  for (const sec of sectionsEl.querySelectorAll(".section-block")) {
+    const secName = sec.querySelector(".sec-name").value.trim();
+    const links = [];
+    for (const row of sec.querySelectorAll(".link-row")) {
+      const t = row.querySelector(".l-title").value.trim();
+      const u = row.querySelector(".l-url").value.trim();
+      const d = row.querySelector(".l-desc").value.trim();
+      if (t || u) links.push(`- [${t || u}](${u || "#"})${d ? ": " + d : ""}`);
+    }
+    if (secName || links.length) out += `\n## ${secName || "Section"}\n\n${links.join("\n")}\n`;
+  }
+  document.getElementById("preview").textContent = out;
+}
+
+function val(id) { return document.getElementById(id).value.trim(); }
+
+document.getElementById("copyBtn").addEventListener("click", async () => {
+  await navigator.clipboard.writeText(document.getElementById("preview").textContent);
+  flash("Copied ✓");
+});
+document.getElementById("dlBtn").addEventListener("click", () => {
+  const blob = new Blob([document.getElementById("preview").textContent], { type: "text/plain" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "llms.txt";
+  a.click();
+  URL.revokeObjectURL(a.href);
+  flash("Downloaded ✓");
+});
+function flash(msg) {
+  const el = document.getElementById("copiedMsg");
+  el.textContent = msg;
+  setTimeout(() => (el.textContent = ""), 2000);
+}
+
+addSection("Docs");
+build();
+</script>
+</body>
+</html>

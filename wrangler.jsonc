@@ -1,0 +1,21 @@
+// AgentLens — flagship site, deploys to the existing `createjob` Worker.
+// Root config so that Cloudflare Workers Builds' default `npx wrangler deploy` works.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "createjob",
+  "main": "sites/agentlens/src/index.js",
+  "compatibility_date": "2026-07-01",
+  "assets": {
+    "directory": "sites/agentlens/public",
+    "binding": "ASSETS"
+  },
+  "kv_namespaces": [
+    {
+      "binding": "SIGNUPS",
+      "id": "ad034fbd62384eb3abd7b612fc33e268"
+    }
+  ],
+  "observability": {
+    "enabled": true
+  }
+}

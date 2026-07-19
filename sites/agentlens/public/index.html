@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AgentLens — Is your website visible to AI?</title>
+<meta name="description" content="Free AI visibility & agent-readiness checker. Scan any website in seconds: llms.txt, AI crawler access, structured data, and agent readiness — with a 0-100 score and concrete fixes.">
+<meta property="og:title" content="AgentLens — Is your website visible to AI?">
+<meta property="og:description" content="Scan any website in seconds and get an AI visibility score with concrete fixes.">
+<meta property="og:type" content="website">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "AgentLens",
+  "applicationCategory": "SEOApplication",
+  "description": "Free AI visibility and agent-readiness checker. Scores any website on AI crawler access, llms.txt, structured data and agent readiness.",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "operatingSystem": "Web"
+}
+</script>
+<style>
+  :root {
+    --bg: #0a0e1a; --panel: #111827; --panel2: #0f1524;
+    --text: #e5e9f2; --muted: #8b94a7; --line: #232c42;
+    --accent: #5eead4; --accent2: #818cf8;
+    --pass: #34d399; --warn: #fbbf24; --fail: #f87171;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body {
+    background: var(--bg); color: var(--text);
+    font: 16px/1.6 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    min-height: 100vh;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 0 20px; }
+  header { padding: 28px 0; display: flex; align-items: center; justify-content: space-between; }
+  .logo { font-weight: 800; font-size: 20px; letter-spacing: -.02em; }
+  .logo span { color: var(--accent); }
+  nav a { color: var(--muted); text-decoration: none; font-size: 14px; margin-left: 18px; }
+  nav a:hover { color: var(--text); }
+  .hero { text-align: center; padding: 48px 0 8px; }
+  .hero h1 {
+    font-size: clamp(30px, 5.5vw, 52px); font-weight: 800; letter-spacing: -.03em; line-height: 1.12;
+  }
+  .hero h1 em {
+    font-style: normal;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .hero p.sub { color: var(--muted); max-width: 620px; margin: 18px auto 0; font-size: 17px; }
+  .scanbox { display: flex; gap: 10px; max-width: 620px; margin: 32px auto 10px; }
+  .scanbox input {
+    flex: 1; background: var(--panel); border: 1px solid var(--line); color: var(--text);
+    border-radius: 12px; padding: 15px 18px; font-size: 16px; outline: none;
+  }
+  .scanbox input:focus { border-color: var(--accent); }
+  .scanbox button {
+    background: linear-gradient(90deg, var(--accent), var(--accent2)); color: #08101d;
+    border: 0; border-radius: 12px; padding: 0 26px; font-size: 16px; font-weight: 700; cursor: pointer;
+  }
+  .scanbox button:disabled { opacity: .55; cursor: wait; }
+  .hint { color: var(--muted); font-size: 13px; text-align: center; }
+  .error { color: var(--fail); text-align: center; margin-top: 14px; min-height: 22px; font-size: 14px; }
+
+  #result { display: none; margin: 34px 0 60px; }
+  .scorecard {
+    display: flex; gap: 28px; align-items: center; background: var(--panel);
+    border: 1px solid var(--line); border-radius: 18px; padding: 26px 30px; flex-wrap: wrap;
+  }
+  .ring { position: relative; width: 130px; height: 130px; flex: 0 0 auto; }
+  .ring svg { transform: rotate(-90deg); }
+  .ring .val { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .ring .val b { font-size: 34px; line-height: 1; }
+  .ring .val small { color: var(--muted); font-size: 12px; }
+  .scoremeta h2 { font-size: 20px; word-break: break-all; }
+  .scoremeta .gradeline { margin-top: 6px; color: var(--muted); font-size: 14px; }
+  .grade-badge {
+    display: inline-block; font-weight: 800; border-radius: 8px; padding: 2px 10px; margin-right: 8px;
+    background: var(--panel2); border: 1px solid var(--line); color: var(--accent); font-size: 16px;
+  }
+  .pillars { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; margin-top: 16px; }
+  .pillar { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 18px; }
+  .pillar h3 { font-size: 15px; display: flex; justify-content: space-between; align-items: baseline; }
+  .pillar h3 span { color: var(--muted); font-weight: 600; font-size: 13px; }
+  .bar { height: 6px; background: var(--panel2); border-radius: 4px; margin: 10px 0 14px; overflow: hidden; }
+  .bar i { display: block; height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 4px; }
+  .chk { display: flex; gap: 9px; font-size: 13.5px; padding: 5px 0; align-items: flex-start; }
+  .chk .dot { flex: 0 0 auto; width: 9px; height: 9px; border-radius: 50%; margin-top: 6px; }
+  .dot.pass { background: var(--pass); } .dot.warn { background: var(--warn); } .dot.fail { background: var(--fail); }
+  .chk .lbl { font-weight: 600; }
+  .chk .det { color: var(--muted); }
+  .recs { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 22px; margin-top: 16px; }
+  .recs h3 { font-size: 16px; margin-bottom: 10px; }
+  .recs li { margin: 8px 0 8px 18px; font-size: 14.5px; color: var(--text); }
+  .recs li b { color: var(--accent); }
+
+  .capture {
+    margin-top: 18px; background: linear-gradient(135deg, #10203a, #131a33);
+    border: 1px solid var(--line); border-radius: 14px; padding: 24px; text-align: center;
+  }
+  .capture h3 { font-size: 18px; }
+  .capture p { color: var(--muted); font-size: 14px; margin: 6px auto 14px; max-width: 520px; }
+  .capture form { display: flex; gap: 10px; max-width: 460px; margin: 0 auto; }
+  .capture input {
+    flex: 1; background: var(--bg); border: 1px solid var(--line); color: var(--text);
+    border-radius: 10px; padding: 12px 14px; font-size: 15px; outline: none;
+  }
+  .capture button {
+    background: var(--accent); border: 0; border-radius: 10px; padding: 0 20px;
+    font-weight: 700; color: #08101d; cursor: pointer;
+  }
+  .capture .done { color: var(--pass); font-weight: 600; }
+
+  .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin: 56px 0; }
+  .feature { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 20px; }
+  .feature h3 { font-size: 15px; margin-bottom: 6px; }
+  .feature p { color: var(--muted); font-size: 13.5px; }
+  .stat { color: var(--accent); font-weight: 800; }
+
+  footer { border-top: 1px solid var(--line); padding: 26px 0 40px; color: var(--muted); font-size: 13.5px; }
+  footer a { color: var(--accent); text-decoration: none; }
+  @media (max-width: 560px) { .scanbox, .capture form { flex-direction: column; } .scanbox button, .capture button { padding: 13px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo">Agent<span>Lens</span></div>
+    <nav>
+      <a href="/llms.txt">llms.txt</a>
+      <a href="#tools">Free tools</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h1>Is your website <em>visible to AI</em>?</h1>
+    <p class="sub">ChatGPT, Perplexity and AI agents are the new front door to the web.
+    Scan any site in seconds and get a 0–100 AI-visibility score — with the exact fixes, prioritized.</p>
+    <div class="scanbox">
+      <input id="url" type="text" placeholder="yourwebsite.com" autocomplete="off" spellcheck="false">
+      <button id="go">Scan free</button>
+    </div>
+    <div class="hint">Checks AI crawler access · llms.txt · structured data · agent readiness. No signup needed.</div>
+    <div class="error" id="err"></div>
+  </section>
+
+  <section id="result">
+    <div class="scorecard">
+      <div class="ring">
+        <svg width="130" height="130" viewBox="0 0 130 130">
+          <circle cx="65" cy="65" r="56" fill="none" stroke="#1c2540" stroke-width="12"/>
+          <circle id="ringbar" cx="65" cy="65" r="56" fill="none" stroke="url(#g)" stroke-width="12"
+                  stroke-linecap="round" stroke-dasharray="352" stroke-dashoffset="352"
+                  style="transition: stroke-dashoffset 1s ease"/>
+          <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#5eead4"/><stop offset="1" stop-color="#818cf8"/>
+          </linearGradient></defs>
+        </svg>
+        <div class="val"><b id="scoreval">0</b><small>/ 100</small></div>
+      </div>
+      <div class="scoremeta">
+        <h2 id="scannedurl"></h2>
+        <div class="gradeline"><span class="grade-badge" id="gradeval">—</span><span id="verdict"></span></div>
+        <div class="gradeline" id="took"></div>
+      </div>
+    </div>
+    <div class="pillars" id="pillars"></div>
+    <div class="recs" id="recs" style="display:none"><h3>Priority fixes</h3><ol id="reclist"></ol></div>
+    <div class="capture">
+      <h3>Get monitored, not just scanned</h3>
+      <p>We're building weekly AI-visibility monitoring: track your score, get alerted when ChatGPT or Perplexity
+      can't see you, and benchmark against competitors. Join the early list — first 100 get it free for a year.</p>
+      <form id="capform">
+        <input id="capemail" type="email" placeholder="you@company.com" required>
+        <button type="submit">Join waitlist</button>
+      </form>
+    </div>
+  </section>
+
+  <section class="features" id="tools">
+    <div class="feature">
+      <h3>Why it matters now</h3>
+      <p><span class="stat">31%</span> of the US already uses generative AI search. The overlap between Google's top
+      links and AI-cited sources has collapsed from 70% to under 20% — ranking on Google no longer means AI can see you.</p>
+    </div>
+    <div class="feature">
+      <h3>The easy edge</h3>
+      <p><span class="stat">65%</span> of top-100 websites still have no llms.txt. Most sites block the wrong crawlers
+      by accident. Fixing the basics puts you ahead of nearly everyone.</p>
+    </div>
+    <div class="feature">
+      <h3>Free: llms.txt Builder</h3>
+      <p>Generate a spec-correct llms.txt for your site in 2 minutes with our free tool →
+      <a href="#" data-sister="llmstxt-builder" style="color:var(--accent)">llms.txt Builder</a></p>
+    </div>
+    <div class="feature">
+      <h3>Next: sell to agents</h3>
+      <p>AI agents will drive <span class="stat">$385B</span> in commerce by 2030. See what an agent-native storefront
+      looks like → <a href="#" data-sister="agentfront" style="color:var(--accent)">AgentFront</a></p>
+    </div>
+  </section>
+
+  <footer>
+    <div>AgentLens — part of the AI-first web toolkit. Sister sites:
+      <a href="#" data-sister="llmstxt-builder">llms.txt Builder</a> ·
+      <a href="#" data-sister="agentfront">AgentFront</a></div>
+    <div style="margin-top:6px">Scores are heuristic and based on publicly fetchable signals. © 2026 AgentLens</div>
+  </footer>
+</div>
+
+<script>
+// Sister-site links: derive from current hostname so they work on any
+// workers.dev subdomain (createjob.<sub>.workers.dev -> <name>.<sub>.workers.dev).
+(function () {
+  const m = location.hostname.match(/^[^.]+\.(.+\.workers\.dev)$/);
+  document.querySelectorAll("[data-sister]").forEach((a) => {
+    a.href = m ? `https://${a.dataset.sister}.${m[1]}/` : `https://${a.dataset.sister}.workers.dev/`;
+  });
+})();
+
+const $ = (id) => document.getElementById(id);
+const input = $("url"), btn = $("go"), err = $("err");
+
+async function scan() {
+  const url = input.value.trim();
+  if (!url) return;
+  err.textContent = "";
+  btn.disabled = true; btn.textContent = "Scanning…";
+  $("result").style.display = "none";
+  try {
+    const r = await fetch("/api/check?url=" + encodeURIComponent(url));
+    const data = await r.json();
+    if (!data.ok) throw new Error(data.error || "Scan failed.");
+    render(data);
+  } catch (e) {
+    err.textContent = e.message || "Scan failed — try again.";
+  } finally {
+    btn.disabled = false; btn.textContent = "Scan free";
+  }
+}
+btn.addEventListener("click", scan);
+input.addEventListener("keydown", (e) => e.key === "Enter" && scan());
+
+function render(d) {
+  $("result").style.display = "block";
+  $("scannedurl").textContent = d.url;
+  $("gradeval").textContent = d.grade;
+  $("took").textContent = "Scanned in " + (d.tookMs / 1000).toFixed(1) + " s · " + new Date(d.fetchedAt).toLocaleString();
+  $("verdict").textContent =
+    d.score >= 80 ? "Strong — AI systems can see and use this site." :
+    d.score >= 55 ? "Partially visible — real gaps are costing you AI citations." :
+    "Largely invisible to AI. Every day this stays unfixed, answer engines recommend competitors instead.";
+
+  const pct = d.score;
+  requestAnimationFrame(() => {
+    $("ringbar").style.strokeDashoffset = String(352 - (352 * pct) / 100);
+  });
+  animateNumber($("scoreval"), pct);
+
+  const pillars = $("pillars");
+  pillars.innerHTML = "";
+  const recs = [];
+  for (const p of d.pillars) {
+    const div = document.createElement("div");
+    div.className = "pillar";
+    const pctP = Math.round((p.score / p.max) * 100);
+    div.innerHTML = '<h3>' + p.name + '<span>' + p.score + "/" + p.max + '</span></h3><div class="bar"><i style="width:' + pctP + '%"></i></div>';
+    for (const c of p.checks) {
+      const row = document.createElement("div");
+      row.className = "chk";
+      row.innerHTML = '<span class="dot ' + c.status + '"></span><span><span class="lbl">' + esc(c.label) + ":</span> <span class=\"det\">" + esc(c.detail) + "</span></span>";
+      div.appendChild(row);
+      if (c.recommendation && c.status !== "pass") recs.push({ label: c.label, rec: c.recommendation, sev: c.status === "fail" ? 0 : 1 });
+    }
+    pillars.appendChild(div);
+  }
+  recs.sort((a, b) => a.sev - b.sev);
+  const recsBox = $("recs"), list = $("reclist");
+  list.innerHTML = "";
+  for (const r of recs.slice(0, 8)) {
+    const li = document.createElement("li");
+    li.innerHTML = "<b>" + esc(r.label) + ":</b> " + esc(r.rec);
+    list.appendChild(li);
+  }
+  recsBox.style.display = recs.length ? "block" : "none";
+  document.getElementById("result").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function animateNumber(el, to) {
+  const t0 = performance.now();
+  const tick = (t) => {
+    const k = Math.min((t - t0) / 900, 1);
+    el.textContent = String(Math.round(to * (1 - Math.pow(1 - k, 3))));
+    if (k < 1) requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+}
+
+function esc(s) {
+  return String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+
+$("capform").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const email = $("capemail").value.trim();
+  const r = await fetch("/api/subscribe", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, site: $("scannedurl").textContent || "" }),
+  });
+  const data = await r.json().catch(() => ({}));
+  if (data.ok) {
+    e.target.innerHTML = '<span class="done">✓ You\'re on the list — we\'ll be in touch.</span>';
+  }
+});
+</script>
+</body>
+</html>

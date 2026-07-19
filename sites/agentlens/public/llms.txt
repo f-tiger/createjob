@@ -1,0 +1,13 @@
+# AgentLens
+
+> Free AI visibility and agent-readiness checker. Scan any public website and get a 0-100 score across AI crawler access, machine-readable surface (llms.txt, sitemap), content structure (JSON-LD, meta), and agent readiness — with prioritized, concrete fixes.
+
+## Tool
+
+- [AI Visibility Scanner](/): Enter a URL, get an instant score and fix list. No signup required.
+- [Scan API](/api/check?url=example.com): JSON API — GET /api/check?url=<site>. Returns score, grade, per-pillar checks and recommendations. Free for agents to call.
+
+## Sister sites
+
+- llms.txt Builder (worker: llmstxt-builder): Free generator for spec-correct llms.txt files.
+- AgentFront (worker: agentfront): Agent-native storefront template for the agentic commerce era.

@@ -1,0 +1,20 @@
+// AgentFront — agentic-commerce landing + waitlist API
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "agentfront",
+  "main": "src/index.js",
+  "compatibility_date": "2026-07-01",
+  "assets": {
+    "directory": "public",
+    "binding": "ASSETS"
+  },
+  "kv_namespaces": [
+    {
+      "binding": "SIGNUPS",
+      "id": "ad034fbd62384eb3abd7b612fc33e268"
+    }
+  ],
+  "observability": {
+    "enabled": true
+  }
+}

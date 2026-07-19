@@ -1,0 +1,13 @@
+# llms.txt Builder
+
+> Free online generator that creates spec-correct llms.txt files, with a plain-English guide to the llms.txt standard. Fill a form, get a valid file, upload it to your web root.
+
+## Tool
+
+- [Builder](/): Interactive form with live preview. Copy or download the generated llms.txt.
+- [Guide](/#guide): What llms.txt is, the exact format, who uses it, and how it differs from robots.txt and sitemap.xml.
+
+## Sister sites
+
+- AgentLens (worker: createjob): Free AI visibility scanner — verify your site after uploading llms.txt.
+- AgentFront (worker: agentfront): Agent-native storefront template for agentic commerce.
